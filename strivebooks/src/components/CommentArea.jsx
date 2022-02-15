@@ -1,4 +1,3 @@
-import { Component } from "react";
 import {
   ListGroup,
   Button,
@@ -6,18 +5,27 @@ import {
   Form,
   Spinner,
 } from "react-bootstrap";
+import {useState, useEffect} from "react"
 
-class CommentArea extends Component {
-  state = {
+const CommentArea = (props) => {
+ /*  state = {
     bookComments: [],
     isLoading: false,
-  };
+  }; */
 
-  fetchBookComments = async () => {
+  const [bookComments, setBookComments] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(()=>{
+    fetchBookComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[props.selectedBookAsin])
+
+ const fetchBookComments = async () => {
     try {
       let response = await fetch(
         "https://striveschool-api.herokuapp.com/api/comments/" +
-          this.props.selectedBookAsin,
+          props.selectedBookAsin,
         {
           method: "GET",
           headers: {
@@ -30,10 +38,12 @@ class CommentArea extends Component {
       if (response.ok) {
         let data = await response.json();
         /* console.log(data) */
-        this.setState({
+        /* this.setState({
           bookComments: data,
           isLoading: false,
-        });
+        }); */
+        setBookComments(data)
+        setIsLoading(false)
       } else {
         // alert('something went wrong :(')
       }
@@ -42,26 +52,25 @@ class CommentArea extends Component {
     }
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  /* componentDidUpdate(prevProps, prevState) {
     if (prevProps.selectedBookAsin !== this.props.selectedBookAsin) {
       this.fetchBookComments();
     }
-  }
+  } */
 
-  render() {
-    console.log(this.props.selectedBookAsin);
-    return (
+  
+  return (
       <div className="sticky-top">
         <h3>What others say about this book:</h3>
         <ListGroup>
-          {this.props.selectedBookAsin ? (
-            this.state.bookComments.length == 0 ? (
+          {props.selectedBookAsin ? (
+            bookComments.length == 0 ? (
               <ListGroup.Item>
                 No comments for this book
                 <i className="bi bi-emoji-frown ml-2"></i>
               </ListGroup.Item>
             ) : (
-              this.state.bookComments.map((comment) => (
+              bookComments.map((comment) => (
                 <ListGroup.Item key={comment._id}>
                   <i>"{comment.comment}"</i>
                 </ListGroup.Item>
@@ -73,7 +82,7 @@ class CommentArea extends Component {
         </ListGroup>
       </div>
     );
-  }
+                 
 }
 
 export default CommentArea;

@@ -5,23 +5,30 @@ import MyBadge from "./MyBadge";
 import WarningSing from "./WarningSign";
 import { Component } from "react";
 import CommentArea from "./CommentArea";
+import {useState, useEffect  } from "react";
 
-class BookList extends Component {
-  state = {
+
+
+const BookList = (props) => {
+
+/*   state = {
     searchQuery: "",
     bookSelected: null
-  };
+  }; */
 
+const [searchQuery, setSearchQuery] = useState("")
+const [bookSelected, setBookSelected] = useState(null)
 
-  bookClicked = (asin) => {
+const bookClicked = (asin) => {
     console.log("clicked");
-    this.setState({
+    /* this.setState({
       bookSelected: asin
-    })
+    }) */
+    setBookSelected(asin)
 
   }
 
-  render() {
+  
     return (
       <Container fluid>
         <h1 id="Latest">
@@ -33,11 +40,12 @@ class BookList extends Component {
             placeholder="Search"
             className="me-2"
             aria-label="Search"
-            value={this.state.searchQuery}
+            value={searchQuery}
             onChange={(e) =>
-              this.setState({
+              /* this.setState({
                 searchQuery: e.target.value,
-              })
+              }) */
+              setSearchQuery(e.target.value)
             }
           />
         </Form>
@@ -45,12 +53,12 @@ class BookList extends Component {
         <Row>
           <Col xs={8}>
             <Row>
-              {this.props.books
+              {props.books
                 .filter(
                   (book) =>
                     book.title
                       .toLowerCase()
-                      .indexOf(this.state.searchQuery.toLowerCase()) !== -1
+                      .indexOf(searchQuery.toLowerCase()) !== -1
                 )
                 .map((book) => (
                   <SingleBookClass
@@ -59,16 +67,16 @@ class BookList extends Component {
                     price={book.price}
                     key={book.asin}
                     asin={book.asin}
-                    bookClicked={this.bookClicked}
+                    bookClicked={bookClicked}
                   />
                 ))}
             </Row>
           </Col>
-          <Col xs={4}> <CommentArea selectedBookAsin={this.state.bookSelected}/> </Col>
+          <Col xs={4}> <CommentArea selectedBookAsin={bookSelected}/> </Col>
         </Row>
       </Container>
     );
-  }
+  
 }
 
 export default BookList;

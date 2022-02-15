@@ -1,11 +1,14 @@
 import { Component } from "react";
 import { Card, Col, Button } from "react-bootstrap";
 import Comments from "./Comments";
+import { useState } from "react";
 
-class SingleBookClass extends Component {
-  state = {
+const SingleBookClass = (props) =>  {
+  /* state = {
     selected: false,
-  };
+  }; */
+
+  const[selected, setSelected] = useState(false)
 
   /* toggleState = (event) => {
     if (this.state.selected === false) {
@@ -21,30 +24,30 @@ class SingleBookClass extends Component {
     }
   }; */
 
-  render() {
+ 
     return (
       <Col
         xs={4}
         className="mb-3"
-        key={this.props.asin}
+        key={props.asin}
         /* onClick={(event) => this.toggleState(event)} */
-        onClick={() => this.props.bookClicked(this.props.asin)}
+        onClick={() => props.bookClicked(props.asin)}
       >
         <Card>
-          <Card.Img variant="top" src={this.props.img} />
+          <Card.Img variant="top" src={props.img} />
           <Card.Body>
             <Card.Subtitle className="mb-2 text-muted">
-              {this.props.category}
+              {props.category}
             </Card.Subtitle>
-            <Card.Title>{this.props.title}</Card.Title>
-            <Card.Text>{this.props.price} $</Card.Text>
+            <Card.Title>{props.title}</Card.Title>
+            <Card.Text>{props.price} $</Card.Text>
 
-            <Comments asin={this.props.asin} />
+            <Comments asin={props.asin} />
           </Card.Body>
         </Card>
       </Col>
     );
-  }
+  
 }
 export default SingleBookClass;
 
