@@ -6,10 +6,12 @@ import {
   Form,
   Spinner,
 } from "react-bootstrap";
+import {useState, useEffect} from "react";
 
-class Comments extends Component {
 
-    state = {
+const Comments = (props) => {
+
+    /* state = {
         bookComments: [],
         showComments: false,
         showAddComment: false,
@@ -19,14 +21,21 @@ class Comments extends Component {
             elementId: ""
         },
         isLoading: true
-    }
+    } */
 
-loadComments = async() => {
+const [bookComments, setBookComments] = useState([])    
+const [showComments, setShowComments] = useState(false)    
+const [showAddComment, setShowAddComment] = useState(false)    
+const [newComment, setNewComment] = useState({
+  comment: "",
+  rate: "",
+  elementId: "",
+}); 
+const [isLoading, setIsLoading] = useState(true)  
+
+const loadComments = async() => {
     console.log("i am mounted");
-    let asin = this.props.asin 
-    
-    
-    
+    let asin = props.asin    
 
     try {
         let response = await fetch(
@@ -43,10 +52,13 @@ loadComments = async() => {
         if (response.ok) {
             let data = await response.json()
             /* console.log(data) */
-            this.setState({
+            /* this.setState({
               bookComments: data,
               isLoading: false
-            });
+            }); */
+
+            setBookComments(data)
+            setIsLoading(false)
            
         } else {
             // alert('something went wrong :(')
@@ -57,29 +69,27 @@ loadComments = async() => {
         }
     }
 
-showComments = () => {
-this.state.showComments
-  ? this.setState({ showComments: false })
-  : this.setState({ showComments: true });
+const unHideComments = () => {
+showComments ? setShowComments(false) : setShowComments(true);
 }
     
-postComment = async (e) => {
+const postComment = async (e) => {
      e.preventDefault();
      console.log("I post")    
 
-    this.state.newComment.rate = document.getElementById("ratingValue").value;
-    this.state.newComment.comment =
+    newComment.rate = document.getElementById("ratingValue").value;
+    newComment.comment =
       document.getElementById("commentValue").value;
-    this.state.newComment.elementId = this.props.asin; 
+    newComment.elementId = props.asin; 
 
-    console.log(this.state.newComment);
+    console.log(newComment);
     
     try {
       let response = await fetch(
         "https://striveschool-api.herokuapp.com/api/comments/",
         {
           method: "POST",
-          body: JSON.stringify(this.state.newComment),
+          body: JSON.stringify(newComment),
           headers: {
             "Content-Type": "application/json",
             Authorization:
@@ -90,8 +100,9 @@ postComment = async (e) => {
       if (response.ok) {
         let data = await response.json();
         console.log(data);
-        this.loadComments();
-        this.setState({ showAddComment: false });
+        loadComments();
+        /* this.setState({ showAddComment: false }); */
+        setShowAddComment(false)
       } else {
         // alert('something went wrong :(')
       }
@@ -100,7 +111,7 @@ postComment = async (e) => {
     }
 }
 
-deleteComment = async (e) => {
+const deleteComment = async (e) => {
     e.preventDefault();
     console.log("I DELETE")
     console.log(e.target.id)
@@ -120,7 +131,7 @@ deleteComment = async (e) => {
       if (response.ok) {
         let data = await response.json();
         console.log(data);
-        this.loadComments();
+        loadComments();
       } else {
         // alert('something went wrong :(')
       }
@@ -130,32 +141,32 @@ deleteComment = async (e) => {
 }
 
 
-    render () {
+  
         return (
           <div>
             <Button
               variant="link"
               className="mb-2"
-              onClick={() => {this.showComments();
-              this.loadComments();}}
+              onClick={() => {
+                unHideComments();
+                loadComments();
+              }}
             >
               <i className="bi bi-list mr-2"></i>Show comments
             </Button>
-            {this.state.showComments && (
+            {showComments && (
               <ListGroup>
-                {this.state.isLoading && (
-                  <Spinner animation="border" variant="primary" />
-                )}
-                {this.state.bookComments == 0 ? (
+                {isLoading && <Spinner animation="border" variant="primary" />}
+                {bookComments == 0 ? (
                   <ListGroup.Item>No Comments for this book :( </ListGroup.Item>
                 ) : (
-                  this.state.bookComments.map((comment) => (
+                  bookComments.map((comment) => (
                     <ListGroup.Item key={comment._id}>
                       <i>"{comment.comment}"</i>
                       <Button
                         variant="link"
                         id={comment._id}
-                        onClick={this.deleteComment}
+                        onClick={deleteComment}
                       >
                         <i className="bi bi-trash3"></i>Delete
                       </Button>
@@ -166,17 +177,17 @@ deleteComment = async (e) => {
                   <Button
                     variant="link"
                     onClick={() =>
-                      this.state.showAddComment
-                        ? this.setState({ showAddComment: false })
-                        : this.setState({ showAddComment: true })
+                      showAddComment
+                        ? setShowAddComment(false)
+                        : setShowAddComment(true)
                     }
                   >
                     <i className="bi bi-plus-lg"></i>Add Comment
                   </Button>
                 </ListGroupItem>
-                {this.state.showAddComment && (
+                {showAddComment && (
                   <ListGroupItem className="px-0">
-                    <Form onSubmit={this.postComment}>
+                    <Form onSubmit={postComment}>
                       <Form.Group className="mb-3" controlId="ratingValue">
                         <Form.Label>Rating:</Form.Label>
                         <Form.Control
@@ -198,7 +209,7 @@ deleteComment = async (e) => {
             )}
           </div>
         );
-    }
+    
 
 
 
