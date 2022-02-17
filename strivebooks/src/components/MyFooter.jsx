@@ -2,7 +2,7 @@
  import Container from "react-bootstrap/Container";
 
 const MyFooter = () => (
-  <Navbar bg="dark" variant="dark" >
+  <Navbar bg="dark" variant="dark" className="fixed-bottom" >
     <Container>
       <Navbar.Brand href="#home">Learn more </Navbar.Brand>
 

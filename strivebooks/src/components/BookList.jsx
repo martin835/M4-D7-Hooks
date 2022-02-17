@@ -25,7 +25,6 @@ const bookClicked = (asin) => {
       bookSelected: asin
     }) */
     setBookSelected(asin)
-
   }
 
   
